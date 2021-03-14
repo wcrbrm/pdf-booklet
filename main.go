@@ -50,7 +50,7 @@ func getPages(start int, end int, total int) []int {
 	arr[0] = total
 	rev := total - 1
 	for i := 1; i <= total/2; i += 2 {
-		fmt.Printf("%d out of %d\n", offs, total)
+		// fmt.Printf("%d out of %d\n", offs, total)
 		arr[offs] = i
 		offs++
 		arr[offs] = i + 1
@@ -87,7 +87,7 @@ func alignedNumOfPages(n int, groupSize int) int {
 	if n%groupSize == 0 {
 		return n
 	}
-	return n/groupSize + groupSize
+	return (n/groupSize)*groupSize + groupSize
 }
 
 func actualNumOfPages(directory string) int {
@@ -160,8 +160,8 @@ func main() {
 		pages := getPages(gstart-1, gend, totalPageNum)
 		frontFile := fmt.Sprintf("output-%04d-%04d-front.pdf", gstart, gend)
 		backFile := fmt.Sprintf("output-%04d-%04d-back.pdf", gstart, gend)
-		fmt.Printf("front: %v %v\n", unite(outDir, frontFile, frontPages(pages)), frontPages(pages))
-		fmt.Printf("back: %v %v\n", unite(outDir, backFile, backPages(pages)), backPages(pages))
+		fmt.Printf("lp -o number-up=2 %v # %v\n", unite(outDir, frontFile, frontPages(pages)), frontPages(pages))
+		fmt.Printf("lp -o number-up=2 %v # %v\n", unite(outDir, backFile, backPages(pages)), backPages(pages))
 	}
 	clean(outDir)
 }
