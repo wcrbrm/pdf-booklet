@@ -43,30 +43,34 @@ func backPages(src []int) []int {
 	return arr
 }
 
-func getPages(start int, end int, total int) []int {
-	arr := make([]int, total)
+func getPages(start int, end int) []int {
+	arr := make([]int, end-start+1)
 	// n, 1, 2, n-1, n-2, 3, 4, n-3, n-4, 5, 6, n-5, n-6, 7, 8, n-7, n-8, 9, 10, n-9, n-10, 11, 12, n-11…
+	totals := end - start + 1
 	offs := 1
-	arr[0] = total
-	rev := total - 1
-	for i := 1; i <= total/2; i += 2 {
-		// fmt.Printf("%d out of %d\n", offs, total)
-		arr[offs] = i
-		offs++
+	arr[0] = end + 1
+	rev := end
+	for i := start; i < end; i += 2 {
+		// fmt.Printf("%d out of (%d..%d)\n", offs, start, end)
 		arr[offs] = i + 1
 		offs++
+		arr[offs] = i + 2
+		offs++
+		if offs >= totals {
+			break
+		}
 		arr[offs] = rev
 		offs++
 		rev--
-		if offs >= total {
+		if offs >= totals {
 			break
 		}
 		arr[offs] = rev
 		offs++
 		rev--
 	}
-
-	return arr[start:end]
+	fmt.Printf("# start=%d end=%d totals=%d %v\n", start, end, totals, arr)
+	return arr // [start:end]
 }
 
 func clean(directory string) {
@@ -157,7 +161,7 @@ func main() {
 	}
 	for gstart := 1; gstart < totalPageNum; gstart += *nGroup {
 		gend := gstart + *nGroup - 1
-		pages := getPages(gstart-1, gend, totalPageNum)
+		pages := getPages(gstart-1, gend-1)
 		frontFile := fmt.Sprintf("output-%04d-%04d-front.pdf", gstart, gend)
 		backFile := fmt.Sprintf("output-%04d-%04d-back.pdf", gstart, gend)
 		fmt.Printf("lp -o number-up=2 %v # %v\n", unite(outDir, frontFile, frontPages(pages)), frontPages(pages))
